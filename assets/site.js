@@ -120,9 +120,13 @@
   });
 
   /* pop in from below (transform only, stays visible) */
+  /* skips [data-spin] children (their rotation is driven by the scroll spin) and always ends at rest, so items never stay offset */
   document.querySelectorAll('[data-pop]').forEach(group => {
-    g.from(group.children, {y: 60, rotate: (i) => (i % 2 ? 4 : -4), scale: .92, duration: .9, ease: 'expo.out', stagger: .08,
-      scrollTrigger: {trigger: group, start: 'top 85%'}});
+    const items = [...group.children].filter(el => !el.hasAttribute('data-spin'));
+    if (!items.length) return;
+    g.fromTo(items, {y: 60, rotate: (i) => (i % 2 ? 4 : -4), scale: .92},
+      {y: 0, rotate: 0, scale: 1, duration: .9, ease: 'expo.out', stagger: .08, clearProps: 'transform',
+        scrollTrigger: {trigger: group, start: 'top 85%', once: true}});
   });
 
   /* marquee lines slide with scroll */
