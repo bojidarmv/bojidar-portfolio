@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>About · Bojidar Vasilev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* This page is deliberately black in both themes: the portrait is a cut-out made to sit on black. */
+:root{color-scheme:dark}
+body.about-page{
+  --bg:#050507; --fg:#F4F1FA; --muted:#A7A1B5;
+  --glass:rgba(255,255,255,.05); --glass-strong:rgba(22,20,30,.82); --glass-line:rgba(255,255,255,.10);
+  --shadow:0 24px 60px -24px rgba(0,0,0,.9);
+  background:var(--bg); color:var(--fg)}
+
+/* full-bleed portrait hero: the photo is the background, never stretched (height-driven, width auto) */
+.portrait-hero{position:relative;width:100vw;margin-left:calc(50% - 50vw);min-height:clamp(560px,88vh,980px);overflow:hidden;isolation:isolate;
+  display:flex;align-items:center}
+.portrait-hero .glow{position:absolute;inset:0;z-index:-2;
+  background:
+    radial-gradient(60% 70% at 72% 40%,rgba(255,255,255,.07),transparent 65%),
+    radial-gradient(40% 45% at 85% 85%,rgba(241,6,143,.10),transparent 70%),
+    radial-gradient(35% 40% at 15% 20%,rgba(42,195,255,.06),transparent 70%),
+    #050507}
+.portrait-hero .photo{position:absolute;z-index:-1;bottom:0;right:max(0px,calc(50% - 600px));height:100%;width:auto;max-width:none;object-fit:contain;object-position:bottom right;
+  filter:contrast(1.04);scale:-1 1}
+.portrait-hero::after{content:"";position:absolute;inset:auto 0 0 0;height:22%;z-index:0;pointer-events:none;background:linear-gradient(to bottom,transparent,var(--bg))}
+.hero-copy{position:relative;z-index:1;width:100%;max-width:1200px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px;display:grid;gap:22px}
+.hero-copy > *{max-width:min(560px,52%)}
+.hi{font-size:clamp(80px,15vw,220px);line-height:1;letter-spacing:-.06em}
+.hi .line{padding-block:.06em .04em}
+.hero-top{position:absolute;inset:0 0 auto 0;z-index:2}
+.hero-top .top{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (max-width:760px){
+  .portrait-hero{align-items:flex-end;min-height:clamp(620px,96vh,900px)}
+  .portrait-hero .photo{right:auto;left:0;height:82%}
+  .portrait-hero::after{height:55%;background:linear-gradient(to bottom,transparent,rgba(5,5,7,.85) 45%,var(--bg))}
+  .hero-copy > *{max-width:100%}
+  .hero-copy{padding-block:0 48px}
+}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.facts div{padding:20px;border-radius:22px;background:var(--glass);border:1px solid var(--glass-line);display:grid;gap:6px}
+.facts b{font-family:var(--display);font-weight:900;font-size:clamp(28px,3.4vw,40px);letter-spacing:-.03em;line-height:1}
+.facts span{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body class="about-page" data-field="black">
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+
+<div class="page"><div class="wrap">
+  <section class="portrait-hero">
+    <div class="glow" aria-hidden="true"></div>
+    <img class="photo" src="assets/about/BV.png" alt="Portrait of Bojidar Vasilev" width="825" height="1100">
+    <div class="hero-top">
+      <header class="top">
+        <a class="mark" href="index.html" data-home><img src="assets/bv-logo.png" alt="" width="30" height="30"><span>Bojidar Vasilev</span></a>
+        <span class="crumb">About</span>
+      </header>
+    </div>
+    <div class="hero-copy">
+      <span class="eyebrow">Who’s behind the work</span>
+      <h1 class="giant hi" data-split><span class="line"><span class="hl">Hi!</span></span></h1>
+      <p class="lede">Your presence is an honor for me. <span>My name is Bojidar, a multidisciplinary designer specializing in marketing and web design.</span></p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <p class="read" data-words>I have successfully completed projects with tangible results in the set objectives.</p>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div data-marquee><span>Marketing</span><span class="fill">SEO</span><span>Google Ads</span><span class="fill">Meta</span><span>Social media</span><span class="fill">Web design</span><span>Photography</span><span class="fill">Sketching</span></div></div>
+
+  <section class="sec">
+    <div class="sec-head"><span class="tag">In short</span><h2>Skills meet curiosity</h2></div>
+    <div class="facts" data-pop>
+      <div><b>7+</b><span>years of experience in creation</span></div>
+      <div><b>UI · Web</b><span>Interfaces and websites</span></div>
+      <div><b>Marketing</b><span>SEO optimization, Google Ads, Meta, social media, print, packaging and brand identity</span></div>
+      <div><b>Photo · Sketch</b><span>Personal interests that feed the work</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <p class="read" data-words>I combine my professional skills with interests in photography and sketching because to do something in the best way, you need to understand the principles.</p>
+  </section>
+
+  <section class="sec">
+    <a class="next" href="contacts.html"><span class="tag">Let’s talk</span><b>Contacts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></a>
+  </section>
+  <p class="note">Prototype · text and portrait from bojidar.webflow.io/about</p>
+</div></div>
+
+<nav class="dock" aria-label="Main">
+  <a href="index.html" data-home><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span class="lbl">Work</span></a>
+  <a href="about.html" class="on" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span class="lbl">About</span></a>
+  <a href="contacts.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg><span class="lbl">Contacts</span></a>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="assets/site.js"></script>
+<script>
+/* slow drift of the portrait while scrolling: transform only, so the photo keeps its proportions */
+if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  gsap.to('.portrait-hero .photo', {yPercent: 8, ease: 'none', scrollTrigger: {trigger: '.portrait-hero', start: 'top top', end: 'bottom top', scrub: true}});
+}
+</script>
+</body>
+</html>
