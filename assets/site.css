@@ -51,9 +51,10 @@ a{color:inherit}
 .p-hero{display:grid;gap:22px;padding-block:7vh 64px}
 .eyebrow,.tag{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .giant{font-family:var(--display);font-weight:900;font-size:clamp(46px,10vw,150px);line-height:.92;letter-spacing:-.045em;margin:0;text-wrap:balance}
-.giant .line{display:block;overflow:hidden;padding-bottom:.06em}
+.giant .line{display:block;overflow:hidden;padding-bottom:.22em;margin-bottom:-.16em}
 .giant .ch{display:inline-block;will-change:transform}
-.giant .hl{background:linear-gradient(100deg,var(--pink),var(--magenta) 45%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.giant .hl{background:linear-gradient(100deg,var(--pink),var(--magenta) 45%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;
+  padding:0 .06em .22em;margin:0 -.06em -.22em} /* room for descenders (g, j, y) so the gradient paints them */
 .lede{max-width:48ch;font-size:clamp(17px,2vw,21px);font-weight:500;margin:0}
 .lede span{color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
