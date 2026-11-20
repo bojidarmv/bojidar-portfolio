@@ -33,15 +33,24 @@
   --body:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   --blend:multiply;
+  --lg-top:rgba(255,255,255,.42); --lg-mid:rgba(255,255,255,.16); --lg-bot:rgba(255,255,255,.28);
+  --lg-edge:rgba(255,255,255,.55); --lg-hi:rgba(255,255,255,.9); --lg-lo:rgba(255,255,255,.25);
+  --lg-inner:rgba(255,255,255,.12); --lg-rim2:rgba(255,255,255,.55);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#130A2C; --fg:#F6F2FF; --muted:#B9B0D0;
   --glass:rgba(40,22,86,.42); --glass-strong:rgba(34,18,74,.78); --glass-line:rgba(255,255,255,.14);
-  --shadow:0 20px 60px -20px rgba(0,0,0,.6); --blend:screen; color-scheme:dark}}
+  --shadow:0 20px 60px -20px rgba(0,0,0,.6); --blend:screen; color-scheme:dark;
+  --lg-top:rgba(255,255,255,.16); --lg-mid:rgba(255,255,255,.04); --lg-bot:rgba(255,255,255,.09);
+  --lg-edge:rgba(255,255,255,.18); --lg-hi:rgba(255,255,255,.45); --lg-lo:rgba(255,255,255,.06);
+  --lg-inner:rgba(255,255,255,.05); --lg-rim2:rgba(255,255,255,.22)}}
 :root[data-theme="dark"]{
   --bg:#130A2C; --fg:#F6F2FF; --muted:#B9B0D0;
   --glass:rgba(40,22,86,.42); --glass-strong:rgba(34,18,74,.78); --glass-line:rgba(255,255,255,.14);
-  --shadow:0 20px 60px -20px rgba(0,0,0,.6); --blend:screen; color-scheme:dark}
+  --shadow:0 20px 60px -20px rgba(0,0,0,.6); --blend:screen; color-scheme:dark;
+  --lg-top:rgba(255,255,255,.16); --lg-mid:rgba(255,255,255,.04); --lg-bot:rgba(255,255,255,.09);
+  --lg-edge:rgba(255,255,255,.18); --lg-hi:rgba(255,255,255,.45); --lg-lo:rgba(255,255,255,.06);
+  --lg-inner:rgba(255,255,255,.05); --lg-rim2:rgba(255,255,255,.22)}
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -97,10 +106,31 @@ h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,3.6vw,40px);l
 .btn-round:focus-visible,.card:focus-visible,.dock button:focus-visible,.dock a:focus-visible,.modal button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,340px);gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 4px 26px;scrollbar-width:none;overscroll-behavior-x:contain}
 .track::-webkit-scrollbar{display:none}
+/* desktop & tablet: every card visible, no cut-off carousel */
+@media (min-width:768px){
+  .arrows{display:none}
+  .track{grid-auto-flow:row;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));overflow:visible;scroll-snap-type:none;padding:10px 0 26px}
+  .card{min-height:400px}
+}
+/* one-by-one reveal (only when JS runs, so cards never stay hidden without it) */
+.reveal .card{opacity:0;translate:0 46px;scale:.94;filter:blur(8px);
+  transition:opacity .7s ease,translate .9s cubic-bezier(.2,.9,.25,1.1),scale .9s cubic-bezier(.2,.9,.25,1.1),filter .7s ease,transform .3s ease,box-shadow .3s;
+  transition-delay:calc(var(--i,0) * 120ms)}
+.reveal .card.in{opacity:1;translate:0 0;scale:1;filter:none}
 .card{scroll-snap-align:start;position:relative;display:flex;flex-direction:column;min-height:420px;border-radius:26px;overflow:hidden;text-decoration:none;color:var(--fg);
   background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0));transition:transform .3s ease,box-shadow .3s}
 .card:hover{--ty:-6px}
+/* liquid glass: clear tinted pane, strong blur + saturation, bright specular rim, soft inner light */
+.card{
+  background:linear-gradient(155deg,var(--lg-top) 0%,var(--lg-mid) 45%,var(--lg-bot) 100%);
+  border:1px solid var(--lg-edge);
+  backdrop-filter:blur(26px) saturate(185%) brightness(1.06);-webkit-backdrop-filter:blur(26px) saturate(185%) brightness(1.06);
+  box-shadow:inset 0 1px 0 var(--lg-hi),inset 0 -1px 0 var(--lg-lo),inset 0 0 0 1px var(--lg-inner),inset 0 18px 40px -24px var(--lg-hi),var(--shadow)}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;padding:1.2px;
+  background:linear-gradient(135deg,var(--lg-hi) 0%,transparent 32%,transparent 62%,var(--lg-rim2) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.card.alt{background:linear-gradient(155deg,var(--lg-top) 0%,var(--lg-mid) 55%,var(--lg-bot) 100%)}
 .card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;
   background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.35),transparent 60%);z-index:3}
 .card:hover::before{opacity:1}
@@ -156,10 +186,10 @@ h2{font-family:var(--display);font-weight:800;font-size:clamp(26px,3.6vw,40px);l
 .card:hover .brand-grid i:nth-child(5){transform:translateY(-6px)}
 
 /* about + contact cards */
-.card.alt{background:linear-gradient(160deg,var(--glass-strong),var(--glass))}
 .big-num{font-family:var(--display);font-weight:900;font-size:120px;line-height:.8;letter-spacing:-.06em;position:absolute;left:20px;bottom:24px;
   background:linear-gradient(120deg,var(--pink),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
-.big-num small{font-size:20px;letter-spacing:0;display:block;margin-top:10px;color:var(--fg);-webkit-text-fill-color:var(--fg)}
+.big-num small{font-size:20px;letter-spacing:0;display:block;margin-top:10px;color:var(--fg);-webkit-text-fill-color:var(--fg);padding-right:58px} /* keep clear of the arrow button */
+.big-num{right:20px}
 .wave{position:absolute;inset:auto 0 0 0;height:70%}
 
 /* dock */
@@ -362,6 +392,22 @@ dialog[open] .sheet{animation:pop .45s cubic-bezier(.2,.9,.25,1.15)}
     });
     c.addEventListener('pointerleave', () => { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); });
   });
+
+  /* ---------- cards appear one by one when the section scrolls into view ---------- */
+  const trk = document.getElementById('track');
+  if (!reduce && 'IntersectionObserver' in window) {
+    const cards = [...trk.querySelectorAll('.card')];
+    cards.forEach((c, i) => c.style.setProperty('--i', i));
+    trk.classList.add('reveal');
+    const io = new IntersectionObserver(entries => {
+      if (!entries.some(e => e.isIntersecting)) return;
+      io.disconnect();
+      cards.forEach(c => c.classList.add('in'));
+      /* after the last card lands, drop the reveal styles so hover/tilt react without delay */
+      setTimeout(() => { trk.classList.remove('reveal'); cards.forEach(c => c.classList.remove('in')); }, 900 + cards.length * 120 + 200);
+    }, {threshold: .15});
+    io.observe(trk);
+  }
 
   /* ---------- carousel arrows ---------- */
   const track = document.getElementById('track'), prev = document.getElementById('prev'), next = document.getElementById('next');
