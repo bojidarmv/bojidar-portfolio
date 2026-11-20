@@ -31,6 +31,11 @@
 .strip img{width:100%}
 .izidream .frame{background:#E68A6C}
 .izitex .frame{background:#24302B;border-color:rgba(255,255,255,.08)}
+/* side-by-side frames share one row height: .fill takes the height of its neighbour, so each pair forms one clean rectangle */
+.bento .fill{align-self:stretch}
+.bento .fill img{position:absolute;inset:0}
+.bento .fit img{object-fit:contain}
+@media (max-width:820px){.bento .fill{aspect-ratio:var(--ar)}} /* stacked on small screens: keep the image's own shape */
 </style>
 </head>
 <body>
@@ -56,8 +61,8 @@
       <figure class="frame light c12" data-reveal style="aspect-ratio:21/9">
         <video src="assets/brand/Izidream_logo_web_after-transcode.mp4" autoplay muted loop playsinline aria-label="Izidream logo animation"></video>
       </figure>
-      <figure class="frame c7" data-reveal data-speed=".3" style="aspect-ratio:1600/779"><img src="assets/brand/Box-6.png" alt="Izidream Textile Studio logo" loading="lazy"></figure>
-      <figure class="frame c5" data-reveal data-speed="-.3" style="aspect-ratio:1"><img src="assets/brand/Box-1.png" alt="Izidream colour swatches" loading="lazy"></figure>
+      <figure class="frame c7" data-reveal style="aspect-ratio:1600/779"><img src="assets/brand/Box-6.png" alt="Izidream Textile Studio logo" loading="lazy"></figure>
+      <figure class="frame c5 fill" data-reveal style="--ar:1"><img src="assets/brand/Box-1.png" alt="Izidream colour swatches" loading="lazy"></figure>
     </div>
   </section>
 
@@ -70,7 +75,7 @@
 
   <section class="sec">
     <div class="bento">
-      <figure class="frame light c4" data-reveal data-speed=".5" style="aspect-ratio:779/1600;max-height:640px"><img src="assets/brand/Box-5.png" alt="Choosing the right palette is essential" loading="lazy"></figure>
+      <figure class="frame light c4 fill fit" data-reveal style="--ar:779/1600"><img src="assets/brand/Box-5.png" alt="Choosing the right palette is essential" loading="lazy"></figure>
       <figure class="frame light c8" data-reveal style="aspect-ratio:1"><img src="assets/brand/Box-4.png" alt="Colors influence emotions" loading="lazy"></figure>
       <figure class="frame light c12" data-reveal style="aspect-ratio:1397/857"><img src="assets/brand/Box-3.png" alt="Izidream Store mobile app screens" loading="lazy"><figcaption>Izidream Store mobile app</figcaption></figure>
     </div>
