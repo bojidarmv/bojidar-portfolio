@@ -93,11 +93,24 @@ h3{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02
 .hs-track > *{flex:0 0 auto;width:min(520px,78vw)}
 .hs.no-pin .hs-viewport{overflow-x:auto;scroll-snap-type:x mandatory}
 .hs.no-pin .hs-track > *{scroll-snap-align:start}
+/* gallery images pop forward on hover; the viewport clips only sideways so the lift isn't cut off */
+.hs-viewport{overflow-x:clip;overflow-y:visible}
+.hs-track{padding-block:28px}
+.hs .frame{transition:transform .45s cubic-bezier(.2,.9,.25,1.25),box-shadow .45s ease}
+.hs .frame img{transition:transform .7s cubic-bezier(.2,.9,.25,1)}
+@media (hover:hover){
+  .hs .frame:hover{transform:translateY(-12px) scale(1.045);z-index:3;box-shadow:0 36px 70px -22px rgba(60,20,90,.55),0 0 0 1px var(--glass-line)}
+  .hs .frame:hover img{transform:scale(1.04)}
+}
+@media (prefers-reduced-motion:reduce){.hs .frame:hover{transform:none}.hs .frame:hover img{transform:none}}
 .hs-count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:14px;font-variant-numeric:tabular-nums}
 
 /* marquee line */
 .marquee{overflow:hidden;padding-block:24px;white-space:nowrap}
-.marquee span{display:inline-block;font-family:var(--display);font-weight:900;font-size:clamp(48px,9vw,130px);letter-spacing:-.04em;line-height:1;padding-right:.4em;
+/* outline words use a static Montserrat Black: the variable font's glyphs are built from overlapping parts,
+   so a stroke-only outline showed their inner lines; the static cut has clean single contours */
+@font-face{font-family:"Montserrat Outline";src:url("fonts/Montserrat-Black-static.woff2") format("woff2");font-weight:900;font-style:normal;font-display:swap}
+.marquee span{display:inline-block;font-family:"Montserrat Outline",var(--display);font-weight:900;font-size:clamp(48px,9vw,130px);letter-spacing:-.04em;line-height:1;padding-right:.4em;
   color:transparent;-webkit-text-stroke:1.5px var(--fg)}
 .marquee span.fill{color:var(--fg);-webkit-text-stroke:0}
 
