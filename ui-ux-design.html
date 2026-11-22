@@ -18,9 +18,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="preload" href="assets/fonts/montserrat-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/site.css?v=4">
 <script>try{var t=localStorage.getItem('bv-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
@@ -34,6 +33,71 @@
 .bento .fill{align-self:stretch}
 .bento .fill img{position:absolute;inset:0}
 @media (max-width:820px){.bento .fill{aspect-ratio:var(--ar)}}
+/* hero: headline on the left, a 3D phone with the icon set on its home screen on the right */
+.ux-hero{position:relative}
+.ux-phone{position:absolute;top:0;right:-2vw;width:44%;height:100%;pointer-events:none}
+.ux-phone canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity .8s}
+.ux-phone.on canvas{opacity:1}
+@media (min-width:821px){
+  .ux-hero{min-height:min(86vh,880px);align-content:center}
+  .ux-hero > :not(.ux-phone){max-width:56%}
+  .ux-hero .giant{font-size:clamp(46px,7.2vw,124px)}
+}
+@media (max-width:820px){
+  .ux-phone{position:relative;right:auto;width:100%;height:min(118vw,600px);margin-top:4px}
+}
+/* scroll scene: page turns white, "Design iOS icons" passes through, then the icons fly left → right */
+.ux-scene{position:relative;height:620vh;z-index:4}
+.ux-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;z-index:1}
+/* fixed full-screen veil: the whole page fades to white instead of a white block sliding in */
+.ux-white{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:0}
+.ux-pass{position:absolute;left:0;top:50%;margin:0;white-space:nowrap;will-change:transform;color:#111114;
+  font-size:clamp(84px,17vw,280px);line-height:1;letter-spacing:-.04em;transform:translate(100vw,-50%)}
+.ux-pass b{font-family:var(--display);font-weight:800;background:linear-gradient(100deg,#a64df0,#d98cff 55%,#f3d6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ux-pass span{font-family:var(--body);font-weight:300}
+.ux-rows{position:absolute;inset:0}
+.ux-row{position:absolute;left:0;display:flex;gap:clamp(18px,2.4vw,40px);will-change:transform;transform:translate(-100%,-50%)}
+.ux-row{top:50%}
+.ux-row img{display:block;width:clamp(150px,21vw,320px);aspect-ratio:1;border-radius:23%;flex:none;
+  box-shadow:0 24px 40px -18px rgba(40,10,70,.45),0 4px 10px rgba(40,10,70,.12)}
+/* black "Design iOS icons" scene between the icons and the app */
+.dz-scene{position:relative;height:380vh;z-index:4}
+.dz-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;place-items:center}
+.dz-art{width:min(1500px,96vw);height:auto;overflow:visible}
+@media (max-width:820px){.dz-art{width:100vw}}
+.dz-art text{font-family:var(--display)}
+#dz-design{font-size:265px;font-weight:800;letter-spacing:-6px}
+#dz-ios{font-size:236px;font-weight:300;letter-spacing:-4px;fill:#fff}
+#dz-path{fill:none;stroke:url(#dz-line);stroke-width:13;stroke-linecap:butt;stroke-dasharray:1 1;stroke-dashoffset:1}
+/* app scene: the phone drops in back-first, turns to the viewer and switches from the dark to the light theme */
+.ap-scene{position:relative;height:520vh;z-index:4;color:#0d0d0f}
+.ap-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#ap-gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ap-copy{position:absolute;left:max(24px,7vw);top:50%;transform:translateY(-50%);width:min(560px,44vw);pointer-events:none}
+.ap-icon{width:clamp(56px,6vw,84px);aspect-ratio:1;border-radius:22%;background:url(assets/ui/app/app-icon.png) center/cover;box-shadow:0 14px 30px -10px rgba(232,69,107,.55);
+  opacity:0;transform:translateY(20px) scale(.8);transition:opacity .6s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.ap-copy.on .ap-icon{opacity:1;transform:none}
+.ap-copy h2{margin:clamp(26px,5vh,54px) 0 0;font-family:var(--display);font-weight:800;font-size:clamp(40px,5.6vw,92px);line-height:1.04;letter-spacing:-.035em;color:#0d0d0f}
+.ap-copy .ln{display:block;overflow:hidden;padding-bottom:.06em}
+.ap-copy .ln span{display:block;transform:translateY(105%);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.ap-copy.on .ln span{transform:none}
+.ap-copy.on .ln:nth-child(2) span{transition-delay:.08s}
+.ap-copy em{font-style:normal;background:linear-gradient(90deg,#f6a04d,#e8456b 55%,#b8235a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ap-sub{margin:22px 0 0;color:#5d5d66;font-size:clamp(14px,1.2vw,17px);line-height:1.55;max-width:380px;opacity:0;transform:translateY(12px);transition:opacity .6s .25s,transform .6s .25s}
+.ap-copy.on .ap-sub{opacity:1;transform:none}
+.ap-mode{position:absolute;right:max(24px,6vw);bottom:clamp(96px,13vh,130px);display:flex;gap:8px;font:600 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .5s}
+.ap-mode.on{opacity:1}
+.ap-mode b{padding:9px 14px;border-radius:99px;border:1px solid #e3e3e8;color:#6b6b74;transition:background .4s,color .4s,border-color .4s}
+.ap-mode b.on{background:#0d0d0f;color:#fff;border-color:#0d0d0f}
+@media (max-width:820px){
+  .ap-copy{left:0;right:0;top:clamp(28px,5svh,52px);transform:none;width:auto;padding:0 20px;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px}
+  .ap-icon{margin:0;width:clamp(32px,9vw,42px);box-shadow:0 8px 18px -8px rgba(232,69,107,.55)}
+  .ap-copy h2{margin:0;font-size:clamp(20px,5.6vw,28px);line-height:1.1;display:flex;gap:.28em}
+  .ap-copy .ln{padding-bottom:0}
+  .ap-sub{display:none}
+  .ap-mode{left:0;right:0;justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){.ux-scene{height:auto}.ux-stage{position:relative;height:auto;padding:60px 0}}
 </style>
 </head>
 <body>
@@ -47,13 +111,15 @@
     <span class="crumb"><a href="index.html" data-home>Work</a> / UI · UX</span>
   </header>
 
-  <section class="p-hero">
+  <section class="p-hero ux-hero">
     <span class="eyebrow">Digital product · iOS icons</span>
     <h1 class="giant" data-split><span class="line">Your iOS</span><span class="line"><span class="hl">journey</span> starts.</span></h1>
     <ul class="chips"><li>Minimal</li><li>Engaging</li><li>Intuitive</li><li>Versatile</li></ul>
+    <div class="ux-phone" id="ux-phone" role="img" aria-label="iPhone home screen with the redesigned app icons"><canvas id="ux-gl"></canvas></div>
     <span class="scroll-cue"><i></i>Scroll</span>
   </section>
 
+  <template id="ux-old-banners"><!-- previous banners, kept but not rendered -->
   <section class="sec">
     <div class="bento">
       <figure class="frame dark c8" data-reveal style="aspect-ratio:16/9">
@@ -90,13 +156,50 @@
       <figure class="frame dark" data-reveal style="aspect-ratio:673/322"><img src="assets/ui/Button-Back-6-1.png" alt="Hand holding an iPhone with the redesigned icon set" loading="lazy"></figure>
     </div>
   </section>
+  </template>
+</div></div>
 
-  <section class="sec">
-    <div class="bento">
-      <figure class="frame dark c12" data-reveal style="aspect-ratio:1397/857"><img src="assets/ui/Button-Back-9.png" alt="Design iOS icons: minimal, engaging, intuitive, versatile" loading="lazy"></figure>
-      <figure class="frame dark c12" data-reveal style="aspect-ratio:1600/763"><img src="assets/ui/Button-Back-1-1.png" alt="Design iOS icons title" loading="lazy"></figure>
+<section class="ux-scene" id="ux-scene" aria-label="Design iOS icons">
+  <div class="ux-white" id="ux-white"></div>
+  <div class="ux-stage">
+    <p class="ux-pass" id="ux-pass"><b>Design</b> <span>iOS icons</span></p>
+    <div class="ux-rows" id="ux-rows" aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="dz-scene" id="dz-scene" aria-label="Design iOS icons">
+  <div class="dz-stage">
+    <svg class="dz-art" viewBox="0 0 2000 980" aria-hidden="true">
+      <defs>
+        <linearGradient id="dz-word" x1="0" y1="0" x2=".35" y2="1">
+          <stop offset="0" stop-color="#f28ff9"/><stop offset=".48" stop-color="#b768ea"/><stop offset=".78" stop-color="#e7c4f7"/><stop offset="1" stop-color="#ffffff"/>
+        </linearGradient>
+        <linearGradient id="dz-line" gradientUnits="userSpaceOnUse" x1="895" y1="0" x2="1860" y2="0">
+          <stop offset="0" stop-color="#f08ef9"/><stop offset=".45" stop-color="#c06ee8"/><stop offset=".75" stop-color="#dcb6f2"/><stop offset="1" stop-color="#f6eefc"/>
+        </linearGradient>
+        <clipPath id="dz-clip1"><rect x="120" y="150" width="1200" height="350"/></clipPath>
+        <clipPath id="dz-clip2"><rect x="120" y="500" width="1300" height="260"/></clipPath>
+      </defs>
+      <g clip-path="url(#dz-clip1)"><text id="dz-design" x="185" y="423" fill="url(#dz-word)">Design</text></g>
+      <g clip-path="url(#dz-clip2)"><text id="dz-ios" x="190" y="690">iOS icons</text></g>
+      <path id="dz-path" pathLength="1" d="M895 795C950 700 1000 622 1075 615C1150 608 1170 690 1232 565C1292 455 1372 466 1462 466C1600 466 1624 378 1642 252C1660 140 1760 152 1812 192C1872 240 1858 304 1800 404C1730 522 1660 650 1805 760"/>
+    </svg>
+  </div>
+</section>
+
+<section class="ap-scene" id="ap-scene" aria-label="Store mobile app: UI design with a dark and a light theme">
+  <div class="ap-stage">
+    <canvas id="ap-gl" aria-hidden="true"></canvas>
+    <div class="ap-copy" id="ap-copy">
+      <div class="ap-icon" aria-hidden="true"></div>
+      <h2><span class="ln"><span>Store</span></span><span class="ln"><span>Mobile <em>App</em></span></span></h2>
+      <p class="ap-sub">UI design for a home textile store: product pages built around the photo, with a dark and a light theme.</p>
     </div>
-  </section>
+    <div class="ap-mode" id="ap-mode" aria-hidden="true"><b class="on">Dark</b><b>Light</b></div>
+  </div>
+</section>
+
+<div class="page"><div class="wrap">
 
   <section class="sec">
     <a class="next" href="print-design.html"><span class="tag">Next project</span><b>Print design <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></b></a>
@@ -114,5 +217,244 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="assets/site.js?v=2"></script>
+<script>
+/* "Design iOS icons" scene: white page, the headline passes right → left, then three rows of icons cross left → right */
+(() => {
+  const scene = document.getElementById('ux-scene'); if (!scene) return;
+  const white = document.getElementById('ux-white'), pass = document.getElementById('ux-pass'), rowsBox = document.getElementById('ux-rows');
+  const dzFit = () => { const a = document.querySelector('.dz-art'); if (a) a.setAttribute('viewBox', innerWidth < 821 ? '105 150 1795 680' : '0 0 2000 980'); };
+  dzFit(); addEventListener('resize', dzFit);
+  const dzDesign = document.getElementById('dz-design'), dzIos = document.getElementById('dz-ios'), dzPath = document.getElementById('dz-path'), dzArt = document.querySelector('.dz-art');
+  const names = ['lionel', 'mario', 'xbox', 'quake', 'watch-dogs', 'mafia', 'half-life', 'gaming', 'wallet'];
+  const rows = [0].map(r => {
+    const row = document.createElement('div'); row.className = 'ux-row';
+    for (let i = 0; i < names.length; i++) { const img = document.createElement('img'); img.src = `assets/ui/icons/${names[i]}.png`; img.alt = ''; img.loading = 'lazy'; row.appendChild(img); }
+    rowsBox.appendChild(row); return row;
+  });
+  const clamp = v => Math.min(1, Math.max(0, v)), seg = (p, a, b) => clamp((p - a) / (b - a)), io = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  let raf = 0;
+  function render() {
+    raf = 0;
+    const r = scene.getBoundingClientRect();
+    const p = clamp(-r.top / (r.height - innerHeight)), vw = innerWidth;
+    // the page fades to white while the scene slides in, right after the hero phone
+    const enter = clamp(1 - r.top / innerHeight);
+    // veil: page → white (icons) → black (Design scene) → white (app) → back to the page
+    const ap = document.getElementById('ap-scene'), ar = ap ? ap.getBoundingClientRect() : null;
+    const apP = ar ? clamp(-ar.top / (ar.height - innerHeight)) : p;
+    white.style.opacity = seg(enter, .1, .75) * (1 - seg(apP, .94, 1));
+    const dz = document.getElementById('dz-scene');
+    if (dz) {
+      const dr = dz.getBoundingClientRect(), dIn = clamp(1 - dr.top / innerHeight), dP = clamp(-dr.top / (dr.height - innerHeight));
+      const black = seg(dIn, .15, .8) * (1 - seg(dP, .82, 1));
+      const v = Math.round(255 * (1 - black)); white.style.backgroundColor = `rgb(${v},${v},${v})`;
+      if (dr.bottom > 0 && dr.top < innerHeight) {
+        const word = seg(dP, .04, .3), ios = seg(dP, .22, .44), line = seg(dP, .18, .62), out = seg(dP, .82, .97);
+        dzDesign.setAttribute('transform', `translate(0 ${(1 - io(word)) * 300})`);
+        dzIos.setAttribute('transform', `translate(0 ${(1 - io(ios)) * -260})`);
+        dzPath.style.strokeDashoffset = 1 - io(line);
+        dzArt.style.opacity = 1 - out; dzArt.style.transform = `scale(${1 + out * .06})`;
+      }
+    }
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    const tw = pass.offsetWidth, tp = seg(p, .03, .5);
+    pass.style.transform = `translate(${vw - tp * (vw + tw)}px,-50%)`;
+    rows.forEach((row, i) => {
+      const w = row.scrollWidth, t = io(seg(p, .42, .93));
+      row.style.transform = `translate(${-w + t * (vw + w)}px,-50%)`;
+      row.style.opacity = seg(p, .4, .44) * (1 - seg(p, .95, 1));
+    });
+  }
+  const tick = () => { if (!raf) raf = requestAnimationFrame(render); };
+  addEventListener('scroll', tick, {passive: true}); addEventListener('resize', tick); render();
+})();
+</script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+/* Hero phone: the 3D iPhone sits beside the headline, its home screen is built from the icon set,
+   icons pop in on load and the phone gently follows the pointer. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+
+const box = document.getElementById('ux-phone'), canvas = document.getElementById('ux-gl');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ICONS = [['lionel', 'Lionel'], ['mario', 'Mario'], ['xbox', 'Xbox'], ['quake', 'Quake'],
+               ['watch-dogs', 'Watch Dogs'], ['mafia', 'Mafia'], ['half-life', 'Half-Life'], ['gaming', 'Gaming']];
+const DOCK = [['wallet', 'Wallet']];
+const load = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+
+// ---------- home screen drawn on a canvas ----------
+const S = document.createElement('canvas'); S.width = 720; S.height = 1510;
+const g = S.getContext('2d');
+const wall = document.createElement('canvas'); wall.width = S.width; wall.height = S.height;
+{ // grainy graphite wallpaper with a soft diagonal light, like the original mock-up
+  const w = wall.getContext('2d');
+  const base = w.createLinearGradient(0, 0, S.width, S.height); base.addColorStop(0, '#6a6a70'); base.addColorStop(.5, '#3c3c41'); base.addColorStop(1, '#252528');
+  w.fillStyle = base; w.fillRect(0, 0, S.width, S.height);
+  const sheen = w.createLinearGradient(0, S.height * .2, S.width, S.height * .55); sheen.addColorStop(0, 'rgba(255,255,255,0)'); sheen.addColorStop(.5, 'rgba(255,255,255,.10)'); sheen.addColorStop(1, 'rgba(255,255,255,0)');
+  w.fillStyle = sheen; w.fillRect(0, 0, S.width, S.height);
+  const id = w.getImageData(0, 0, S.width, S.height), d = id.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - .5) * 26; d[i] += n; d[i+1] += n; d[i+2] += n; }
+  w.putImageData(id, 0, 0);
+}
+const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+let imgs = {};
+const ease = t => 1 - Math.pow(1 - t, 3), back = t => { const c = 1.6; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+function drawIcon(img, label, cx, cy, size, k) {
+  if (k <= 0 || !img) return;
+  const s = size * (.4 + .6 * back(Math.min(1, k))), a = Math.min(1, k * 1.6);
+  g.save(); g.globalAlpha = a; g.translate(cx, cy);
+  g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 18; g.shadowOffsetY = 8;
+  rr(-s / 2, -s / 2, s, s, s * .23); g.fillStyle = '#000'; g.fill(); g.shadowColor = 'transparent';
+  g.save(); rr(-s / 2, -s / 2, s, s, s * .23); g.clip(); g.drawImage(img, -s / 2, -s / 2, s, s); g.restore();
+  if (label) { g.fillStyle = 'rgba(255,255,255,.92)'; g.font = '600 23px Montserrat, system-ui, sans-serif'; g.textAlign = 'center'; g.fillText(label, 0, size / 2 + 36); }
+  g.restore();
+}
+function paint(t) { // t = seconds since the intro started
+  g.drawImage(wall, 0, 0);
+  // status bar
+  g.fillStyle = '#fff'; g.font = '700 30px Montserrat, system-ui, sans-serif'; g.textAlign = 'left'; g.fillText('9:41', 74, 78);
+  for (let i = 0; i < 4; i++) g.fillRect(548 + i * 11, 70 - i * 6, 7, 8 + i * 6);
+  g.beginPath(); g.arc(612, 76, 16, Math.PI * 1.22, Math.PI * 1.78); g.lineWidth = 5; g.strokeStyle = '#fff'; g.stroke();
+  g.beginPath(); g.arc(612, 76, 7, Math.PI * 1.22, Math.PI * 1.78); g.stroke();
+  rr(636, 56, 44, 22, 6); g.lineWidth = 2.5; g.stroke(); rr(640, 60, 30, 14, 3); g.fill();
+  // icon grid, 4 columns
+  const size = 142, x0 = 103, dx = 171, y0 = 262, dy = 240;
+  ICONS.forEach(([key, label], i) => {
+    const col = i % 4, row = (i / 4) | 0, k = (t - .25 - i * .07) / .55;
+    drawIcon(imgs[key], label, x0 + col * dx, y0 + row * dy, size, reduce ? 1 : k);
+  });
+  // page dots + dock
+  const dk = reduce ? 1 : Math.min(1, Math.max(0, (t - .9) / .5));
+  g.globalAlpha = dk; [0, 1, 2].forEach(i => { g.beginPath(); g.arc(330 + i * 30, 1222, 7, 0, 7); g.fillStyle = i === 0 ? '#fff' : 'rgba(255,255,255,.4)'; g.fill(); });
+  rr(40, 1270, 640, 190, 64); g.fillStyle = 'rgba(255,255,255,.16)'; g.fill(); g.globalAlpha = 1;
+  DOCK.forEach(([key], i) => drawIcon(imgs[key], '', 360 + (i - (DOCK.length - 1) / 2) * dx, 1365, size, reduce ? 1 : (t - 1 - i * .08) / .5));
+}
+
+// ---------- three.js ----------
+const renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .03).texture;
+const cam = new THREE.PerspectiveCamera(24, 1, .01, 50); cam.position.set(0, 0, 4.4);
+const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(2, 3, 4); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffc6f0, 1.4); rim.position.set(-3, 1, -2); scene.add(rim);
+const screenTex = new THREE.CanvasTexture(S); screenTex.colorSpace = THREE.SRGBColorSpace; screenTex.anisotropy = 8;
+const pivot = new THREE.Group(); scene.add(pivot);
+let phone = null, t0 = 0;
+
+function size() { const r = box.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); cam.aspect = r.width / Math.max(1, r.height); cam.updateProjectionMatrix(); }
+addEventListener('resize', size);
+
+Promise.all([...ICONS, ...DOCK].map(([k]) => load(`assets/ui/icons/${k}.png`).then(i => imgs[k] = i))).then(() => paint(0));
+new GLTFLoader().load('assets/ui/phone.glb', gltf => {
+  phone = gltf.scene; pivot.add(phone);
+  phone.traverse(o => { if (!o.isMesh) return;
+    o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
+    [].concat(o.material).forEach(m => {
+      if (m.name === 'Screen') { m.map = screenTex; m.emissiveMap = screenTex; m.emissive = new THREE.Color(1, 1, 1); m.emissiveIntensity = .95; m.color.set(0x000000); m.roughness = .05; }
+      if (m.name === 'Frame') { m.color.setRGB(.42, .42, .45); m.metalness = .95; m.roughness = .3; m.envMapIntensity = 1.8; } // dark titanium, like the mock-up
+      if (m.name === 'BackGlass') { m.color.setRGB(.25, .25, .27); }
+    });
+  });
+  size(); box.classList.add('on'); t0 = performance.now();
+});
+
+// pointer follow (desktop) + slow idle sway
+let mx = 0, my = 0, rx = 0, ry = 0;
+addEventListener('pointermove', e => { mx = e.clientX / innerWidth * 2 - 1; my = e.clientY / innerHeight * 2 - 1; }, {passive: true});
+let visible = true;
+new IntersectionObserver(es => visible = es[0].isIntersecting).observe(box);
+let painted = false;
+(function loop(now) {
+  requestAnimationFrame(loop);
+  if (!phone || !visible) return;
+  const t = (now - t0) / 1000;
+  if (!painted) { paint(t); screenTex.needsUpdate = true; if (t > 1.8 || reduce) painted = true; }
+  // entrance: slides in from the right, turned away, then faces the viewer
+  const e = reduce ? 1 : ease(Math.min(1, t / 1.4));
+  rx += ((reduce ? 0 : my * .12) - rx) * .06; ry += ((reduce ? 0 : mx * .32) - ry) * .06;
+  const sway = reduce ? 0 : Math.sin(t * .8) * .04;
+  pivot.position.set((1 - e) * 1.2, (1 - e) * -.2 + Math.sin(t * 1.1) * .015, 0);
+  pivot.rotation.set(rx + .04, -.38 + (1 - e) * -1.4 + ry + sway, .05 * (1 - e) - .03);
+  const s = innerWidth < 821 ? 1.55 : 1.62; pivot.scale.setScalar(s);
+  renderer.render(scene, cam);
+})(0);
+size();
+
+/* ---------- App scene: phone drops in back-first, turns to the viewer, dark → light theme ---------- */
+{
+  const apScene = document.getElementById('ap-scene'), apCanvas = document.getElementById('ap-gl'),
+        apCopy = document.getElementById('ap-copy'), apMode = document.getElementById('ap-mode'), apModeB = [...apMode.children];
+  const r2 = new THREE.WebGLRenderer({canvas: apCanvas, antialias: true, alpha: true});
+  r2.setPixelRatio(Math.min(devicePixelRatio, 2)); r2.toneMapping = THREE.ACESFilmicToneMapping; r2.toneMappingExposure = 1.05;
+  const w2 = new THREE.Scene();
+  w2.environment = new THREE.PMREMGenerator(r2).fromScene(new RoomEnvironment(), .03).texture;
+  const cam2 = new THREE.PerspectiveCamera(26, 1, .01, 50); cam2.position.set(0, 0, 4.2);
+  const k2 = new THREE.DirectionalLight(0xffffff, 1.6); k2.position.set(2, 3, 4); w2.add(k2);
+  const rim2 = new THREE.DirectionalLight(0xffd9c2, 1.2); rim2.position.set(-3, 1, -3); w2.add(rim2);
+  w2.add(new THREE.HemisphereLight(0xffffff, 0xd8d8e0, .6));
+  const shC = document.createElement('canvas'); shC.width = shC.height = 128;
+  { const c = shC.getContext('2d'), gr = c.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(30,10,30,.35)'); gr.addColorStop(1, 'rgba(30,10,30,0)'); c.fillStyle = gr; c.fillRect(0, 0, 128, 128); }
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({map: new THREE.CanvasTexture(shC), transparent: true, depthWrite: false}));
+  shadow.rotation.x = -Math.PI / 2; w2.add(shadow);
+  // screen: crop the phone area out of the two mock-ups and crossfade them on one canvas
+  const SC = document.createElement('canvas'); SC.width = 720; SC.height = 1520;
+  const sc = SC.getContext('2d'), tex2 = new THREE.CanvasTexture(SC); tex2.colorSpace = THREE.SRGBColorSpace; tex2.anisotropy = 8;
+  let dark, light, crop, mixLast = -1;
+  const paint2 = mix => {
+    if (!dark || Math.abs(mix - mixLast) < .004) return; mixLast = mix; const [cx, cy, cw, ch] = crop;
+    sc.globalAlpha = 1; sc.drawImage(dark, cx, cy, cw, ch, 0, 0, SC.width, SC.height);
+    if (mix > 0) { sc.globalAlpha = mix; sc.drawImage(light, cx, cy, cw, ch, 0, 0, SC.width, SC.height); }
+    tex2.needsUpdate = true;
+  };
+  const piv2 = new THREE.Group(); w2.add(piv2); let phone2 = null, narrow = false;
+  const size2 = () => { r2.setSize(innerWidth, innerHeight, false); cam2.aspect = innerWidth / innerHeight; narrow = innerWidth < 821; cam2.fov = narrow ? 34 : 26; cam2.updateProjectionMatrix(); };
+  addEventListener('resize', size2); size2();
+  Promise.all([load('assets/ui/app/screen-dark-src.webp'), load('assets/ui/app/screen-light-src.webp'), new GLTFLoader().loadAsync('assets/ui/phone.glb')]).then(([d, l, gltf]) => {
+    // the phone screen inside the 2000×1500 mock-ups sits at x 752–1242, y 248–1305
+    dark = d; light = l; crop = [d.width * .376, d.height * .1653, d.width * .245, d.height * .7047]; paint2(0);
+    phone2 = gltf.scene; piv2.add(phone2);
+    phone2.traverse(o => { if (!o.isMesh) return;
+      o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
+      [].concat(o.material).forEach(m => {
+        if (m.name === 'Screen') { m.map = tex2; m.emissiveMap = tex2; m.emissive = new THREE.Color(1, 1, 1); m.emissiveIntensity = .92; m.color.set(0x000000); m.roughness = .05; }
+        if (m.name === 'Frame') { m.envMapIntensity = 1.6; m.roughness = .26; m.color.setRGB(.8, .81, .83); }
+        if (m.name === 'BackGlass') { m.color.setRGB(.9, .9, .92); m.roughness = .5; m.envMapIntensity = 1.2; }
+      });
+    });
+  });
+  const cl = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), sg = (p, a, b) => cl((p - a) / (b - a)),
+        io3 = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, out3 = t => 1 - Math.pow(1 - t, 3), lp = (a, b, t) => a + (b - a) * t;
+  (function loop2() {
+    requestAnimationFrame(loop2);
+    const r = apScene.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    const p = cl(-r.top / (r.height - innerHeight));
+    apCopy.classList.toggle('on', p > .02 || r.top < innerHeight * .3);
+    apMode.classList.toggle('on', p > .62 && p < .97);
+    const m = io3(sg(p, .66, .84)); paint2(m);
+    apModeB[0].classList.toggle('on', m < .5); apModeB[1].classList.toggle('on', m >= .5);
+    if (!phone2) return;
+    const d = reduce ? 1 : io3(sg(p, .06, .58));
+    let restX = .42, restY = -.02, s = 1.3;
+    if (narrow) { // fit the phone into the free space between the headline and the Dark/Light switch
+      const visH = 2 * cam2.position.z * Math.tan(cam2.fov * Math.PI / 360);
+      const top = apCopy.getBoundingClientRect().bottom + 10, bot = apMode.getBoundingClientRect().top - 12;
+      const hPx = Math.max(120, bot - top);
+      restX = 0; s = Math.min(1.6, hPx / innerHeight * visH * .96);
+      restY = (.5 - (top + hPx / 2) / innerHeight) * visH;
+    }
+    piv2.position.set(lp(restX + .15, restX, d), lp(2.4, restY, reduce ? 1 : out3(sg(p, .06, .5))), lp(-.6, 0, d));
+    piv2.rotation.set(lp(-.55, 0, d) + Math.sin(d * Math.PI) * .12, lp(Math.PI, Math.PI * 2, d), lp(.22, 0, d));
+    piv2.scale.setScalar(s);
+    const t = performance.now() / 1000, landed = reduce ? 0 : sg(p, .58, .64);
+    piv2.position.y += Math.sin(t * 1.3) * .012 * landed; piv2.rotation.y += Math.sin(t * .9) * .03 * landed;
+    shadow.position.set(piv2.position.x, restY - .62 * s, 0); shadow.scale.set(.9 * s, .28 * s, 1); shadow.material.opacity = sg(p, .3, .58);
+    r2.render(w2, cam2);
+  })();
+}
+</script>
 </body>
 </html>
