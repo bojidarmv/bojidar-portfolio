@@ -326,6 +326,10 @@ const ICONS = [['lionel', 'Lionel'], ['mario', 'Mario'], ['xbox', 'Xbox'], ['qua
 // dock, left → right: Phone, Safari, Messages, Camera (Safari is drawn below: no file for it yet)
 const DOCK = [['phone', ''], ['safari', ''], ['messages', ''], ['camera', '']];
 const load = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+// heavy scenes download their models and images only when the visitor is about two screens away
+const whenNear = (el, fn) => { if (!el || !('IntersectionObserver' in window)) return fn();
+  const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); fn(); } }, {rootMargin: '200% 0px 200% 0px'}); io.observe(el); };
+const small = innerWidth < 821; // phones get lighter site captures (their screens are only ~1000 device px wide)
 
 // ---------- home screen drawn on a canvas ----------
 const S = document.createElement('canvas'); S.width = 720; S.height = 1510;
@@ -501,12 +505,13 @@ size();
       if (m.name === 'BackGlass') { m.color.setRGB(.9, .9, .92); m.roughness = .5; }
     });
   });
-  Promise.all([load('assets/ui/web/old-desktop.jpg'), load('assets/ui/web/new-desktop.jpg'), load('assets/ui/web/old-mobile.jpg'), load('assets/ui/web/new-mobile.jpg'),
+  const sfx = small ? '-sm' : '';
+  whenNear(wsScene, () => Promise.all([load(`assets/ui/web/old-desktop${sfx}.jpg`), load(`assets/ui/web/new-desktop${sfx}.jpg`), load(`assets/ui/web/old-mobile${sfx}.jpg`), load(`assets/ui/web/new-mobile${sfx}.jpg`),
                new GLTFLoader().loadAsync('assets/ui/display.glb'), new GLTFLoader().loadAsync('assets/ui/phone.glb')]).then(([od, nd, om, nm, dg, pg]) => {
     Object.assign(shots, {od, nd, om, nm}); paintScreens(0, 0, 0);
     monM = dg.scene; dress(monM, monTex); monG.add(monM);
     phM = pg.scene; dress(phM, phTex); phG.add(phM);
-  });
+  }));
   const cl = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), sg = (p, a, b) => cl((p - a) / (b - a)),
         e3 = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, lp = (a, b, t) => a + (b - a) * t;
   (function loopW() {
@@ -576,7 +581,7 @@ size();
   const piv2 = new THREE.Group(); w2.add(piv2); let phone2 = null, narrow = false;
   const size2 = () => { r2.setSize(innerWidth, innerHeight, false); cam2.aspect = innerWidth / innerHeight; narrow = innerWidth < 821; cam2.fov = narrow ? 34 : 26; cam2.updateProjectionMatrix(); };
   addEventListener('resize', size2); size2();
-  Promise.all([load('assets/ui/app/screen-dark-src.webp'), load('assets/ui/app/screen-light-src.webp'), new GLTFLoader().loadAsync('assets/ui/phone.glb')]).then(([d, l, gltf]) => {
+  whenNear(apScene, () => Promise.all([load('assets/ui/app/screen-dark-src.webp'), load('assets/ui/app/screen-light-src.webp'), new GLTFLoader().loadAsync('assets/ui/phone.glb')]).then(([d, l, gltf]) => {
     // the phone screen inside the 2000×1500 mock-ups sits at x 752–1242, y 248–1305
     dark = d; light = l; crop = [d.width * .376, d.height * .1653, d.width * .245, d.height * .7047]; paint2(0);
     phone2 = gltf.scene; piv2.add(phone2);
@@ -588,7 +593,7 @@ size();
         if (m.name === 'BackGlass') { m.color.setRGB(.9, .9, .92); m.roughness = .5; m.envMapIntensity = 1.2; }
       });
     });
-  });
+  }));
   const cl = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), sg = (p, a, b) => cl((p - a) / (b - a)),
         io3 = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, out3 = t => 1 - Math.pow(1 - t, 3), lp = (a, b, t) => a + (b - a) * t;
   (function loop2() {
