@@ -18,9 +18,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="preload" href="assets/fonts/montserrat-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/site.css?v=4">
 <style>
 /* This page is deliberately black in both themes: the portrait is a cut-out made to sit on black. */
@@ -46,16 +45,19 @@ body.about-page{
 .hero-copy{position:relative;z-index:1;width:100%;max-width:1200px;margin:0 auto;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px;display:grid;gap:22px}
 .hero-copy > *{max-width:min(560px,52%)}
+.hero-foot{display:grid;gap:22px}
 .hi{font-size:clamp(80px,15vw,220px);line-height:1;letter-spacing:-.06em}
 .hi .line{padding-block:.06em .04em}
 .hero-top{position:absolute;inset:0 0 auto 0;z-index:2}
 .hero-top .top{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 @media (max-width:760px){
-  .portrait-hero{align-items:flex-end;min-height:clamp(620px,96vh,900px)}
-  .portrait-hero .photo{right:auto;left:0;height:82%}
-  .portrait-hero::after{height:55%;background:linear-gradient(to bottom,transparent,rgba(5,5,7,.85) 45%,var(--bg))}
+  /* phone/tablet: the eyebrow sits above the head, "Hi!" and the intro stay at the bottom */
+  .portrait-hero{align-items:stretch;min-height:clamp(640px,100svh,920px)}
+  .portrait-hero .photo{right:auto;left:0;height:76%;bottom:auto;top:clamp(110px,15svh,150px)}
+  .portrait-hero::after{height:50%;background:linear-gradient(to bottom,transparent,rgba(5,5,7,.85) 45%,var(--bg))}
   .hero-copy > *{max-width:100%}
-  .hero-copy{padding-block:0 48px}
+  .hero-copy{display:flex;flex-direction:column;justify-content:space-between;padding-block:96px 104px}
+  .hero-foot{gap:14px}
 }
 
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
@@ -81,8 +83,10 @@ body.about-page{
     </div>
     <div class="hero-copy">
       <span class="eyebrow">Who’s behind the work</span>
-      <h1 class="giant hi" data-split><span class="line"><span class="hl">Hi!</span></span></h1>
-      <p class="lede">Your presence is an honor for me. <span>My name is Bojidar, a multidisciplinary designer specializing in marketing and web design.</span></p>
+      <div class="hero-foot">
+        <h1 class="giant hi" data-split><span class="line"><span class="hl">Hi!</span></span></h1>
+        <p class="lede">Your presence is an honor for me. <span>My name is Bojidar, a Digital Marketing &amp; Design Specialist.</span></p>
+      </div>
     </div>
   </section>
 
