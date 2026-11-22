@@ -77,6 +77,27 @@
 #dz-design{font-size:265px;font-weight:800;letter-spacing:-6px}
 #dz-ios{font-size:236px;font-weight:300;letter-spacing:-4px;fill:#fff}
 #dz-path{fill:none;stroke:url(#dz-line);stroke-width:13;stroke-linecap:butt;stroke-dasharray:1 1;stroke-dashoffset:1}
+/* web design scene: monitor + phone show the old site scrolling, then the redesign */
+.ws-scene{position:relative;height:900vh;z-index:4;color:#0d0d0f}
+.ws-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#ws-gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ws-copy{position:absolute;left:max(24px,6vw);top:50%;transform:translateY(-50%);width:min(420px,28vw);pointer-events:none}
+.ws-title{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(44px,5.4vw,96px);line-height:.98;letter-spacing:-.04em;color:#0d0d0f;transform-origin:0 50%;will-change:transform}
+.ws-title span{display:block}
+.ws-title em{font-style:normal;display:block;padding-bottom:.14em;margin-bottom:-.14em;background:linear-gradient(100deg,#ff2d95,#ff7a3d 35%,#ffd21f 60%,#1fa8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ws-tags{display:flex;gap:8px;margin-top:26px;font:600 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:0;transition:opacity .5s}
+.ws-tags.on{opacity:1}
+.ws-tags b{padding:9px 14px;border-radius:99px;border:1px solid #e3e3e8;color:#6b6b74;transition:background .4s,color .4s,border-color .4s}
+.ws-tags b.on{background:#0d0d0f;color:#fff;border-color:#0d0d0f}
+.ws-sub{margin:18px 0 0;color:#5d5d66;font-size:clamp(14px,1.1vw,16px);line-height:1.55;opacity:0;transition:opacity .5s}
+.ws-sub.on{opacity:1}
+@media (max-width:820px){
+  .ws-copy{left:0;right:0;top:clamp(28px,5svh,52px);transform:none;width:auto;padding:0 20px;text-align:center}
+  .ws-title{font-size:clamp(28px,8vw,40px);transform-origin:50% 0;display:flex;justify-content:center;gap:.25em}
+  .ws-title span,.ws-title em{display:inline}
+  .ws-tags{justify-content:center;margin-top:12px}
+  .ws-sub{display:none}
+}
 /* app scene: the phone drops in back-first, turns to the viewer and switches from the dark to the light theme */
 .ap-scene{position:relative;height:520vh;z-index:4;color:#0d0d0f}
 .ap-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
@@ -192,6 +213,17 @@
       <g clip-path="url(#dz-clip2)"><text id="dz-ios" x="190" y="690">iOS icons</text></g>
       <path id="dz-path" pathLength="1" d="M895 795C950 700 1000 622 1075 615C1150 608 1170 690 1232 565C1292 455 1372 466 1462 466C1600 466 1624 378 1642 252C1660 140 1760 152 1812 192C1872 240 1858 304 1800 404C1730 522 1660 650 1805 760"/>
     </svg>
+  </div>
+</section>
+
+<section class="ws-scene" id="ws-scene" aria-label="Web design: a site on desktop and mobile, before and after the redesign">
+  <div class="ws-stage">
+    <canvas id="ws-gl" aria-hidden="true"></canvas>
+    <div class="ws-copy" id="ws-copy">
+      <h2 class="ws-title" id="ws-title"><span>Web</span> <em>design</em></h2>
+      <div class="ws-tags" aria-hidden="true"><b class="on" id="ws-before">Before</b><b id="ws-after">After · redesign</b></div>
+      <p class="ws-sub">One site on desktop and mobile, before and after the redesign.</p>
+    </div>
   </div>
 </section>
 
@@ -410,6 +442,107 @@ let painted = false;
   renderer.render(scene, cam);
 })(0);
 size();
+
+/* ---------- Web design scene: Studio Display + phone, old site scrolls, then the redesign ---------- */
+{
+  const wsScene = document.getElementById('ws-scene'), wsCanvas = document.getElementById('ws-gl'), wsTitle = document.getElementById('ws-title'),
+        wsTags = document.querySelector('.ws-tags'), wsSub = document.querySelector('.ws-sub'), tBefore = document.getElementById('ws-before'), tAfter = document.getElementById('ws-after');
+  const R = new THREE.WebGLRenderer({canvas: wsCanvas, antialias: true, alpha: true});
+  R.setPixelRatio(Math.min(devicePixelRatio, 2)); R.toneMapping = THREE.ACESFilmicToneMapping;
+  const W = new THREE.Scene(); W.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(), .03).texture;
+  const C = new THREE.PerspectiveCamera(24, 1, .01, 50); C.position.set(0, 0, 5);
+  const kl = new THREE.DirectionalLight(0xffffff, 1.4); kl.position.set(-2, 3, 4); W.add(kl);
+  W.add(new THREE.HemisphereLight(0xffffff, 0xdcdce4, .7));
+  // screens are canvases: a window slides down the full-page captures; the redesign wipes in from the left
+  const mon = document.createElement('canvas'); mon.width = 2560; mon.height = 1444;
+  const ph = document.createElement('canvas'); ph.width = 1080; ph.height = 2266;
+  const monTex = new THREE.CanvasTexture(mon), phTex = new THREE.CanvasTexture(ph);
+  // the canvases are sized to the screens' real on-screen pixels (×dpr) and sampled without mipmaps:
+  // the browser's high-quality downscale keeps text crisp instead of the GPU's blurry mip levels
+  [monTex, phTex].forEach(t => { t.colorSpace = THREE.SRGBColorSpace; t.generateMipmaps = false; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; });
+  const sizeScreens = (monPx, phPx) => {
+    const mw = Math.round(Math.min(2560, Math.max(640, monPx))), pw = Math.round(Math.min(1080, Math.max(360, phPx)));
+    if (Math.abs(mon.width - mw) > 24) { mon.width = mw; mon.height = Math.round(mw * 1444 / 2560); monTex.dispose(); last = ''; }
+    if (Math.abs(ph.width - pw) > 12) { ph.width = pw; ph.height = Math.round(pw * 2266 / 1080); phTex.dispose(); last = ''; }
+    [mon, ph].forEach(c => { const x = c.getContext('2d'); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high'; });
+  };
+  const shots = {};
+  // inset = safe area of the device screen (the phone's rounded glass edges and the island would otherwise hide the page)
+  const slice = (ctx, img, s) => { if (!img) return; const c = ctx.canvas, phone = c === ph;
+    const x0 = phone ? c.width * .055 : 0, y0 = phone ? c.height * .06 : 0, w = c.width - 2 * x0, h = c.height - y0 - (phone ? c.height * .02 : 0);
+    if (phone) { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height); }
+    const sh = img.width * h / w;
+    ctx.drawImage(img, 0, Math.max(0, (img.height - sh) * s), img.width, sh, x0, y0, w, h); };
+  let last = '';
+  function paintScreens(sOld, sNew, wipe) {
+    const key = [sOld, sNew, wipe].map(v => v.toFixed(4)).join();
+    if (key === last || !shots.od) return; last = key;
+    [[mon.getContext('2d'), shots.od, shots.nd, monTex], [ph.getContext('2d'), shots.om, shots.nm, phTex]].forEach(([c, o, n, tx]) => {
+      const w = c.canvas.width, h = c.canvas.height;
+      c.save(); slice(c, o, sOld);
+      if (wipe > 0) { c.beginPath(); c.rect(0, 0, w * wipe, h); c.clip(); slice(c, n, sNew); c.restore(); c.save();
+        if (wipe < 1) { c.fillStyle = 'rgba(255,210,31,.9)'; c.fillRect(w * wipe - 3, 0, 6, h); } }
+      c.restore(); tx.needsUpdate = true;
+    });
+  }
+  const monG = new THREE.Group(), phG = new THREE.Group(); W.add(monG, phG);
+  let monM = null, phM = null, narrow = false;
+  const fit = () => { R.setSize(innerWidth, innerHeight, false); C.aspect = innerWidth / innerHeight; narrow = innerWidth < 821; C.fov = narrow ? 34 : 24; C.updateProjectionMatrix(); last = ''; };
+  addEventListener('resize', fit); fit();
+  const dress = (root, screenTex, frame) => root.traverse(o => { if (!o.isMesh) return;
+    o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
+    // site screens: unlit and not tone-mapped, so the page shows its true colours at full sharpness
+    const screenMat = new THREE.MeshBasicMaterial({map: screenTex, toneMapped: false, name: 'Screen'});
+    if (Array.isArray(o.material)) o.material = o.material.map(m => m.name === 'Screen' ? screenMat : m);
+    else if (o.material.name === 'Screen') o.material = screenMat;
+    [].concat(o.material).forEach(m => {
+      if (m.name === 'Aluminium' || m.name === 'Frame') { m.color.setRGB(.82, .83, .85); m.metalness = .9; m.roughness = .3; m.envMapIntensity = 1.5; }
+      if (m.name === 'BackGlass') { m.color.setRGB(.9, .9, .92); m.roughness = .5; }
+    });
+  });
+  Promise.all([load('assets/ui/web/old-desktop.jpg'), load('assets/ui/web/new-desktop.jpg'), load('assets/ui/web/old-mobile.jpg'), load('assets/ui/web/new-mobile.jpg'),
+               new GLTFLoader().loadAsync('assets/ui/display.glb'), new GLTFLoader().loadAsync('assets/ui/phone.glb')]).then(([od, nd, om, nm, dg, pg]) => {
+    Object.assign(shots, {od, nd, om, nm}); paintScreens(0, 0, 0);
+    monM = dg.scene; dress(monM, monTex); monG.add(monM);
+    phM = pg.scene; dress(phM, phTex); phG.add(phM);
+  });
+  const cl = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), sg = (p, a, b) => cl((p - a) / (b - a)),
+        e3 = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, lp = (a, b, t) => a + (b - a) * t;
+  (function loopW() {
+    requestAnimationFrame(loopW);
+    const r = wsScene.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+    const p = cl(-r.top / (r.height - innerHeight));
+    // 1) "Web design" fills the screen, then settles into its place beside the monitor
+    const tIn = e3(sg(p, .02, .16));
+    const tr = wsTitle.getBoundingClientRect(), ox = wsTitle.offsetWidth, oy = wsTitle.offsetHeight;
+    const restCx = narrow ? innerWidth / 2 : wsTitle.parentElement.offsetLeft + ox / 2, restCy = (narrow ? wsTitle.parentElement.offsetTop : tr.top - (parseFloat(wsTitle.dataset.dy) || 0)) + oy / 2;
+    const big = Math.min(2.6, innerWidth * .8 / Math.max(1, ox));
+    const dx = (innerWidth / 2 - restCx) * (1 - tIn), dy = (innerHeight / 2 - restCy) * (1 - tIn), k = lp(big, 1, tIn);
+    wsTitle.dataset.dy = dy; wsTitle.style.transform = `translate(${dx}px,${dy}px) scale(${k})`;
+    wsTitle.style.opacity = sg(p, 0, .03) * (1 - sg(p, .95, 1));
+    wsTags.classList.toggle('on', p > .36 && p < .96); wsSub.classList.toggle('on', p > .16 && p < .96);
+    const after = p > .66; tBefore.classList.toggle('on', !after); tAfter.classList.toggle('on', after);
+    // screens: old site scrolls, redesign wipes in, redesign scrolls
+    paintScreens(e3(sg(p, .42, .62)), e3(sg(p, .72, .92)), e3(sg(p, .62, .7)));
+    if (!monM) return;
+    const visH = 2 * C.position.z * Math.tan(C.fov * Math.PI / 360), visW = visH * C.aspect;
+    // monitor: normalised to 1 unit tall (≈1.2 wide); fixed on the right on desktop, full width on phones
+    let ms, mx, my, ps, px, py;
+    if (narrow) { ms = Math.min(visW * .92 / 1.2, visH * .5); mx = 0; my = visH * .1; ps = Math.min(ms * .85, visH * .4); px = visW * .25; py = my - ms * .45 - ps * .18; }
+    else { ms = Math.min(visW * .6 / 1.2, visH * .84); mx = visW / 2 - visW * .035 - ms * .6; my = -visH * .01; ps = ms * .6; px = mx + ms * .36; py = my - ms * .2; }
+    const dpr = R.getPixelRatio(); // screen widths in device pixels: monitor glass ≈1.156×scale, phone glass ≈0.46×scale
+    sizeScreens(1.156 * ms / visW * innerWidth * dpr, .46 * ps / visW * innerWidth * dpr * 1.08);
+    const mIn = e3(sg(p, .1, .3)), out = sg(p, .95, 1);
+    monG.scale.setScalar(ms * lp(.8, 1, mIn)); monG.position.set(mx, my + (1 - mIn) * -visH * .5, 0);
+    monG.rotation.set((1 - mIn) * .35, (1 - mIn) * -.5, 0); monG.visible = mIn > 0 && out < 1;
+    // phone joins from the right and stands in front of the monitor
+    const pIn = e3(sg(p, .28, .42));
+    phG.scale.setScalar(ps); phG.position.set(lp(visW * .75, px, pIn), py, .6);
+    phG.rotation.set(0, lp(-1.2, -.18, pIn), 0); phG.visible = pIn > 0 && out < 1;
+    wsCanvas.style.opacity = 1 - out;
+    R.render(W, C);
+  })();
+}
 
 /* ---------- App scene: phone drops in back-first, turns to the viewer, dark → light theme ---------- */
 {
