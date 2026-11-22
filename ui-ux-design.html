@@ -495,6 +495,7 @@ size();
     const screenMat = new THREE.MeshBasicMaterial({map: screenTex, toneMapped: false, name: 'Screen'});
     if (Array.isArray(o.material)) o.material = o.material.map(m => m.name === 'Screen' ? screenMat : m);
     else if (o.material.name === 'Screen') o.material = screenMat;
+    if (o.name === 'Hinge') { o.material = o.material.clone(); o.material.roughness = .6; o.material.envMapIntensity = .6; } // no hot spot under the body
     [].concat(o.material).forEach(m => {
       if (m.name === 'Aluminium' || m.name === 'Frame') { m.color.setRGB(.82, .83, .85); m.metalness = .9; m.roughness = .3; m.envMapIntensity = 1.5; }
       if (m.name === 'BackGlass') { m.color.setRGB(.9, .9, .92); m.roughness = .5; }
@@ -529,7 +530,9 @@ size();
     // monitor: normalised to 1 unit tall (≈1.2 wide); fixed on the right on desktop, full width on phones
     let ms, mx, my, ps, px, py;
     if (narrow) { ms = Math.min(visW * .92 / 1.2, visH * .5); mx = 0; my = visH * .1; ps = Math.min(ms * .85, visH * .4); px = visW * .25; py = my - ms * .45 - ps * .18; }
-    else { ms = Math.min(visW * .6 / 1.2, visH * .84); mx = visW / 2 - visW * .035 - ms * .6; my = -visH * .01; ps = ms * .6; px = mx + ms * .36; py = my - ms * .2; }
+    else { ms = Math.min(visW * .6 / 1.2, visH * .84); mx = visW / 2 - visW * .035 - ms * .6; my = -visH * .01; ps = ms * .6; py = my - ms * .2;
+      // keep the whole phone on screen (it stands .6 closer to the camera, so it looks ~14% wider)
+      px = Math.min(mx + ms * .36, visW / 2 - ps * .49 * 1.14 / 2 - visW * .025); }
     const dpr = R.getPixelRatio(); // screen widths in device pixels: monitor glass ≈1.156×scale, phone glass ≈0.46×scale
     sizeScreens(1.156 * ms / visW * innerWidth * dpr, .46 * ps / visW * innerWidth * dpr * 1.08);
     const mIn = e3(sg(p, .1, .3)), out = sg(p, .95, 1);
