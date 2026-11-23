@@ -444,9 +444,26 @@ dialog[open] .sheet{animation:pop .45s cubic-bezier(.2,.9,.25,1.15)}
   track.addEventListener('scroll', upd, {passive:true}); addEventListener('resize', upd); upd();
 
   /* ---------- contact card wave ---------- */
+  // the canvas is sized only when the card changes size (re-allocating it every frame
+  // made Chrome drop the canvas and show a broken-canvas icon); drawing pauses off screen
   const wv = document.getElementById('wave'), wx = wv.getContext('2d');
+  let wvOn = true;
+  let wvT = 0;
+  // resize only when the size really changed, and redraw at once (a resize clears the canvas)
+  const wvSize = () => { const d = Math.min(devicePixelRatio || 1, 2), nw = Math.max(1, Math.round(wv.clientWidth * d)), nh = Math.max(1, Math.round(wv.clientHeight * d));
+    if (Math.abs(nw - wv.width) < 3 && Math.abs(nh - wv.height) < 3) return; wv.width = nw; wv.height = nh; wvDraw(wvT); };
+  wvSize();
+  if ('ResizeObserver' in window) new ResizeObserver(wvSize).observe(wv); else addEventListener('resize', wvSize);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => { const was = wvOn; wvOn = es[es.length - 1].isIntersecting; if (wvOn && !was && !reduce) requestAnimationFrame(wave); }).observe(wv);
+  wv.addEventListener('contextrestored', () => { wvSize(); requestAnimationFrame(wave); });
   function wave(t) {
-    const w = wv.width = wv.clientWidth * 2, h = wv.height = wv.clientHeight * 2;
+    if (!wvOn && !reduce) return;
+    wvT = t || 0; wvDraw(wvT);
+    if (!reduce && wvOn) requestAnimationFrame(wave);
+  }
+  function wvDraw(t) {
+    const w = wv.width, h = wv.height;
+    wx.clearRect(0, 0, w, h);
     const cols = ['#2AC3FF', '#FF08F7', '#F2FF08'];
     cols.forEach((col, j) => {
       wx.beginPath();
@@ -458,7 +475,6 @@ dialog[open] .sheet{animation:pop .45s cubic-bezier(.2,.9,.25,1.15)}
       wx.fillStyle = col; wx.globalAlpha = .55; wx.fill();
     });
     wx.globalAlpha = 1;
-    if (!reduce) requestAnimationFrame(wave);
   }
   requestAnimationFrame(wave);
 
