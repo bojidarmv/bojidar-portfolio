@@ -410,13 +410,20 @@ totalEmissiveRadiance += vec3(1.0, 0.06, 0.04) * tlM * 0.55;`);
     // the car waits behind the tablet facing us; when the tablet lifts it drives out headlights first, stops, then the camera turns around it
     car.visible = p > T.enter[1] - .005;
     const needW = 2.05 * Wd / (.8 * box.width), Rhide = needW / (2 * tanV * aspect) + 2.3;      // front view: ~2 m wide incl. mirrors
-    const Rframe = (Math.max(2.75 / (tanV * aspect), 1.9 / tanV) + 1.6) * 1.12;
+    // camera distance for the turn. Portrait phones: the distance follows how wide the car looks from the current angle
+    // (≈2 m from the front, 4.4 m from the side), so it fills the width at every angle instead of staying sized for the side
+    const narrow = aspect < .8, frameAt = a => {
+      if (!narrow) return (Math.max(2.75 / (tanV * aspect), 1.9 / tanV) + 1.6) * 1.12;
+      const c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a));
+      return Math.max((c * 1.0 + s * 2.25) * 1.2 / (tanV * aspect), 1.7 / tanV) + s * .95 + c * 2.2;
+    };
+    const Rframe = frameAt(Math.PI);
     const drive = io3(seg(p, T.dolly)), orbit = ease(seg(p, T.orbit)), dolly = drive;
     const back = Math.max(0, Rhide - Rframe) * (1 - drive);                          // how far behind its final spot the car still is
     car.position.z = back; floor.position.z = back;
-    const R = Rframe;
     // start straight in front of the car (it faces -z), then one sweep around it, ending on a front three-quarter view
     const az = Math.PI - orbit * (Math.PI * 7 / 4), el = .04 + Math.sin(Math.PI * Math.min(1, orbit * 1.1)) * .2;
+    const R = frameAt(az);
     const tyc = -.105;
     cam.position.set(Math.sin(az) * Math.cos(el) * R, tyc + Math.sin(el) * R, Math.cos(az) * Math.cos(el) * R);
     // where the car sits on screen: right behind the resting tablet, then a little above centre for the turn

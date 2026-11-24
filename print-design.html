@@ -31,7 +31,9 @@
 .fan > figure{position:absolute;inset:0;margin:0;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 26px 50px -20px rgba(40,10,60,.45);border:1px solid var(--glass-line)}
 .fan > figure img{width:100%;height:100%;object-fit:cover}
 .labels{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:center}
-@media (max-width:720px){.labels{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){.labels{grid-template-columns:1fr 1fr}
+  /* two tags on top, the third centred underneath */
+  .labels .label-card:nth-child(3):last-child{grid-column:1 / -1;justify-self:center;width:calc((100% - 22px) / 2)}}
 .label-card{margin:0}
 .label-card img{display:block;width:100%;border-radius:10px;filter:drop-shadow(0 18px 26px rgba(40,10,60,.22)) drop-shadow(0 3px 6px rgba(40,10,60,.14))}
 .spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
@@ -114,7 +116,7 @@
 .cw-stage .cw-ipad,.cw-stage .cw-caps,.cw-stage .cw-spec,.cw-stage .cw-title{opacity:0}
 .cw-scene .tag{color:#6b6b74}
 .cw-caps,.cw-spec{color:#111114}.cw-cap p,.cw-spec{color:#5d5d66!important}.cw-spec b{color:#111114!important}
-.cw-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,3svh,30px);perspective:1600px;padding:clamp(70px,11svh,120px) 0 clamp(70px,9svh,96px)}
+.cw-stage{position:sticky;top:0;height:100vh;height:100lvh;padding-bottom:calc(clamp(70px,9svh,96px) + 100lvh - 100svh)!important;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,3svh,30px);perspective:1600px;padding:clamp(70px,11svh,120px) 0 clamp(70px,9svh,96px)}
 @media (prefers-reduced-motion:reduce){.cw-title{animation:none}}
 .cw-ipad{--w:min(980px,92vw,calc((100svh - 400px)*1.305));position:relative;width:var(--w);aspect-ratio:1.305;visibility:hidden;background:none!important;box-shadow:none!important;border-radius:calc(var(--w)*.045);padding:calc(var(--w)*.0035);will-change:transform;
   background:linear-gradient(145deg,#d9dadf,#9c9ea6 30%,#e8e9ed 52%,#8d8f97 78%,#c9cad0);
@@ -440,6 +442,13 @@
     const wide = vw >= 900, g2 = Math.min(44, vw * .04), Hb = Math.min((vw * (wide ? .72 : .88) - 2 * g2) / 2.707, (vh - 260) / 1.414 / .9) * .95, wf = Hb / 1.414, tot2 = 2 * Hb + wf + 2 * g2;
     const dx = wide ? Math.min(70, vw * .05) : 0, x0 = dx - tot2 / 2;
     fin2 = {sB: Hb / B1.w, sF: Hb / FL.h, x1: x0 + Hb / 2, x2: x0 + Hb + g2 + Hb / 2, xF: x0 + 2 * Hb + 2 * g2 + wf / 2, y: -vh * (wide ? .1 : .06)};
+    fin2.y1 = fin2.y2 = fin2.yF = fin2.y;
+    if (vw < 700) {
+      /* phones: instead of a tiny row the three sheets settle into a loose pile, each one a step lower and to the right,
+         so every sheet stays big (the flyer, an A5, ends on top) */
+      const Wa = Math.min(vw * .62, (vh - 300) / 1.414 / .88 * .82);
+      Object.assign(fin2, {sB: Wa / B1.w, sF: Wa / FL.h, x1: -vw * .12, x2: 0, xF: vw * .14, y1: -vh * .16, y2: -vh * .08, yF: vh * .03});
+    }
   }
   const dark = scene.querySelector('.nb-dark'), intro = scene.querySelector('.nb-intro'), plates = [...scene.querySelectorAll('.nb-title .pl')],
         chips = [...scene.querySelectorAll('.nb-bar i')], sub = scene.querySelector('.nb-sub'), capsBox = scene.querySelector('.nb-caps'), specBox = scene.querySelector('.nb-spec');
@@ -459,15 +468,15 @@
     /* brochures: each sheet comes in, turns to its back, turns back and settles into the row; the next one plays in front of it.
        When the notebooks start, the row lifts away */
     const ex = io(seg(p, 0, .1));
-    const sheet = (N, a, b, zIn, xEnd, sEnd, rzEnd) => {
+    const sheet = (N, a, b, zIn, xEnd, sEnd, rzEnd, yEnd) => {
       const back = io(seg(r, b, b + .06)), settle = io(seg(r, b + .02, b + .1)), Pn = pose(N, seg(r, a, b));
-      place(N, Pn, {x: lerp(0, xEnd, settle), z: lerp(zIn, 0, settle), y: lerp(0, fin2.y, settle) - ex * innerHeight * .9, s: lerp(1, sEnd, settle),
+      place(N, Pn, {x: lerp(0, xEnd, settle), z: lerp(zIn, 0, settle), y: lerp(0, yEnd, settle) - ex * innerHeight * .9, s: lerp(1, sEnd, settle),
         tilt: lerp(Pn.tilt, 30, settle), rz: lerp(Pn.rz, rzEnd, settle), turn: 180 * back, op: 1 - ex});
       N.nb.style.visibility = ex >= 1 ? 'hidden' : 'visible';
     };
-    sheet(B1, .04, .32, 0, fin2.x1, fin2.sB, -5);
-    sheet(B2, .36, .62, 240, fin2.x2, fin2.sB, 3);
-    sheet(FL, .68, .89, 300, fin2.xF, fin2.sF, 6);
+    sheet(B1, .04, .32, 0, fin2.x1, fin2.sB, -5, fin2.y1);
+    sheet(B2, .36, .62, 240, fin2.x2, fin2.sB, 3, fin2.y2);
+    sheet(FL, .68, .89, 300, fin2.xF, fin2.sF, 6, fin2.yF);
 
     /* notebooks: A5 plays first, turns to its back and back again, settles; the A4 plays in front of it and settles beside it */
     const back5 = io(seg(q, .36, .44)), settle5 = io(seg(q, .44, .52));
